@@ -1,78 +1,154 @@
-# DAX Measures — Indian Railways Analytics
+# Indian Railways Analytics — DAX Measures
 
-## Overview
+This document describes the DAX measures used in the Indian Railways Power BI dashboard to analyze train fares, distance, additional charges, and route coverage.
 
-This document describes the DAX measures used in the Indian Railways — Fare, Availability & Network Intelligence Power BI project.
+## 1. Fare & Revenue Analysis
 
-The measures support fare analysis, journey distance analysis, train counting, route analysis, and average charge calculations.
+### Total Fare Value
+```dax
+Total Fare Value = SUM(FactFare[Total Fare])
+```
+Calculates the total value of fares in the current filter context.
 
-## 1. Train & Route Analysis
+### Fare Average
+```dax
+Fare Average = AVERAGE(FactFare[Total Fare])
+```
+Calculates the average total fare.
 
-| Measure | Description |
-|---|---|
-| Active Train Count | Counts trains considered active under the report's filter logic. |
-| Unique Route Count | Counts distinct routes in the selected data context. |
+### Highest Fare
+```dax
+Highest Fare = MAX(FactFare[Total Fare])
+```
+Returns the highest total fare in the filtered data.
 
-## 2. Fare Analysis
+### Lowest Fare
+```dax
+Lowest Fare = MIN(FactFare[Total Fare])
+```
+Returns the lowest total fare.
 
-| Measure | Description |
-|---|---|
-| Average Fare per KM | Analyzes fare relative to journey distance. |
-| Fare Average | Calculates the average fare under the current filter context. |
-| Highest Fare | Identifies the highest fare in the selected data. |
-| Lowest Fare | Identifies the lowest fare in the selected data. |
-| Overall Fare per KM | Evaluates overall fare relative to journey distance. |
-| Total Fare Value | Aggregates total fare values. |
+### Base Fare Average
+```dax
+Base Fare Average = AVERAGE(FactFare[Base Fare])
+```
+Calculates the average base fare before additional charges.
 
-## 3. Base Fare & Additional Charges
+### Additional Charges Average
+```dax
+Additional Charges Average = [Fare Average] - [Base Fare Average]
+```
+Estimates the difference between average total fare and average base fare.
 
-| Measure | Description |
-|---|---|
-| Base Fare Average | Calculates the average base fare. |
-| Additional Charges Average | Calculates the average of additional charges, according to the measure definition. |
-| Catering Charge Average | Calculates the average catering charge. |
-| Dynamic Fare Average | Calculates the average dynamic fare component. |
-| Other Charge Average | Calculates the average other-charge component. |
-| Reservation Charge Average | Calculates the average reservation charge. |
-| Service Tax Average | Calculates the average service tax component. |
-| Superfast Charge Average | Calculates the average superfast charge. |
+### Fare Markup %
+```dax
+Fare Markup % =
+DIVIDE(
+    [Fare Average] - [Base Fare Average],
+    [Base Fare Average]
+)
+```
+Measures the percentage difference between average total fare and average base fare. Format this measure as a percentage.
 
-## 4. Journey Analysis
+## 2. Distance & Fare Efficiency
 
-| Measure | Description |
-|---|---|
-| Distance Average | Calculates average journey distance. |
-| Distance Total | Aggregates distance values according to the measure definition. |
+### Distance Total
+```dax
+Distance Total = SUM(FactFare[Distance (km)])
+```
+Calculates the sum of recorded distances in the current filter context.
 
-## Additional Fields
+### Distance Average
+```dax
+Distance Average = AVERAGE(FactFare[Distance (km)])
+```
+Calculates the average recorded distance.
 
-The following names also appear in the report's field list. Their classification as measures, columns, or calculated columns must be confirmed in Power BI:
+### Average Fare per KM
+```dax
+Average Fare per KM =
+DIVIDE(
+    [Fare Average],
+    [Distance Average]
+)
+```
+Divides average fare by average distance.
 
-- Base Fare
-- Catering Charge
-- Distance (km)
-- Dynamic Fare
-- Other Charge
-- Reservation Charge
-- Service Tax
-- Superfast Charge
-- Total Fare
+### Overall Fare per KM
+```dax
+Overall Fare per KM =
+DIVIDE(
+    [Total Fare Value],
+    [Distance Total]
+)
+```
+Divides total fare value by total recorded distance. This is a ratio of totals, not necessarily the average fare per kilometre for an individual journey.
 
-## Data Model
+## 3. Additional Charge Analysis
 
-The primary fact table is `FactFare`. Other fields include travel class, train number, station names, route, fare date, timestamp, distance, and duration.
+### Reservation Charge Average
+```dax
+Reservation Charge Average =
+AVERAGE(FactFare[Reservation Charge])
+```
 
-## Validation Notes
+### Superfast Charge Average
+```dax
+Superfast Charge Average =
+AVERAGE(FactFare[Superfast Charge])
+```
 
-- Measure descriptions are based on their names and intended analytical use.
-- Exact DAX expressions should be copied from the final Power BI report.
-- Aggregation methods, filter logic, blank handling, and relationships should be validated against the actual formulas.
-- This document should be updated whenever measures change.
+### Service Tax Average
+```dax
+Service Tax Average =
+AVERAGE(FactFare[Service Tax])
+```
 
-## Tools Used
+### Dynamic Fare Average
+```dax
+Dynamic Fare Average =
+AVERAGE(FactFare[Dynamic Fare])
+```
 
-- Power BI Desktop
-- DAX
-- Power Query
-- Data Modeling
-- Data Visualization
+### Catering Charge Average
+```dax
+Catering Charge Average =
+AVERAGE(FactFare[Catering Charge])
+```
+
+### Other Charge Average
+```dax
+Other Charge Average =
+AVERAGE(FactFare[Other Charge])
+```
+
+These measures calculate average values for their respective fare components under the current report filters.
+
+## 4. Train & Route Coverage
+
+### Active Train Count
+```dax
+Active Train Count =
+DISTINCTCOUNT(FactFare[Train Number])
+```
+Counts distinct train numbers represented in the filtered fare data. It does not independently confirm that a train is currently operating.
+
+### Unique Route Count
+```dax
+Unique Route Count =
+COUNTROWS(
+    SUMMARIZE(
+        FactFare,
+        FactFare[From Station],
+        FactFare[To Station]
+    )
+)
+```
+Counts distinct origin–destination combinations in the current filter context.
+
+## Notes
+- Measures are stored in the `FactFare` table.
+- Results respond to the report's filter context, such as train, class, route, or distance, where those filters apply.
+- `DIVIDE()` helps handle division by zero safely.
+- Average fare-component measures depend on the source data and how missing values are represented.
+- All formulas above are based on the measures defined in the Power BI report.
