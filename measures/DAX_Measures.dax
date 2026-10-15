@@ -1,1 +1,128 @@
+### 1. Total Fare Value
+```dax
+Total Fare Value =
+SUM(FactFare[Total Fare])
+```
 
+### 2. Fare Average
+```dax
+Fare Average =
+AVERAGE(FactFare[Total Fare])
+```
+
+### 3. Highest Fare
+```dax
+Highest Fare =
+MAX(FactFare[Total Fare])
+```
+
+### 4. Lowest Fare
+```dax
+Lowest Fare =
+MIN(FactFare[Total Fare])
+```
+
+### 5. Base Fare Average
+```dax
+Base Fare Average =
+AVERAGE(FactFare[Base Fare])
+```
+
+### 6. Additional Charges Average
+```dax
+Additional Charges Average =
+[Fare Average] - [Base Fare Average]
+```
+
+### 7. Fare Markup %
+```dax
+Fare Markup % =
+DIVIDE(
+    [Fare Average] - [Base Fare Average],
+    [Base Fare Average]
+)
+```
+
+### 8. Overall Fare per KM
+```dax
+Overall Fare per KM =
+DIVIDE(
+    [Total Fare Value],
+    [Distance Total]
+)
+```
+
+### 9. Average Fare per KM
+```dax
+Average Fare per KM =
+DIVIDE(
+    [Fare Average],
+    [Distance Average]
+)
+```
+
+### 10. Reservation Charge Average
+```dax
+Reservation Charge Average =
+AVERAGE(FactFare[Reservation Charge])
+```
+
+### 11. Superfast Charge Average
+```dax
+Superfast Charge Average =
+AVERAGE(FactFare[Superfast Charge])
+```
+
+### 12. Service Tax Average
+```dax
+Service Tax Average =
+AVERAGE(FactFare[Service Tax])
+```
+
+### 13. Dynamic Fare Average
+```dax
+Dynamic Fare Average =
+AVERAGE(FactFare[Dynamic Fare])
+```
+
+### 14. Catering Charge Average
+```dax
+Catering Charge Average =
+AVERAGE(FactFare[Catering Charge])
+```
+
+### 15. Other Charge Average
+```dax
+Other Charge Average =
+AVERAGE(FactFare[Other Charge])
+```
+
+### 16. Distance Total
+```dax
+Distance Total =
+SUM(FactFare[Distance (km)])
+```
+
+### 17. Distance Average
+```dax
+Distance Average =
+AVERAGE(FactFare[Distance (km)])
+```
+
+### 18. Active Train Count
+```dax
+Active Train Count =
+DISTINCTCOUNT(FactFare[Train Number])
+```
+
+### 19. Unique Route Count
+```dax
+Unique Route Count =
+COUNTROWS(
+    SUMMARIZE(
+        FactFare,
+        FactFare[From Station],
+        FactFare[To Station]
+    )
+)
+```
