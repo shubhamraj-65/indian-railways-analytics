@@ -1,12 +1,12 @@
 ## Dashboard Preview
 
-### Page 1 — Overview
+##  Overview
 ![Overview](Dashboard/overview.png)
 
-### Page 2 — Analysis
+## Analysis
 ![Analysis](Dashboard/analysis.png)
 
-### Page 3 — Insights
+## Insights
 ![Insights](Dashboard/insights.png)
 
 ### Data Modelling
